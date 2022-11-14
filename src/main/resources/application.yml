@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://item.c8tp5djsjusu.ap-northeast-2.rds.amazonaws.com/item
+    username: admin
+    password: 12345678
+
+
