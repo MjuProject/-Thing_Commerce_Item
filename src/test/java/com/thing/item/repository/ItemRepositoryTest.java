@@ -26,6 +26,21 @@ public class ItemRepositoryTest {
     }
 
     @Test
+    public void findById_test(){
+        // given
+        Item saveItem = itemRepository.save(item);
+        Integer itemId = saveItem.getItemId();
+        String title = saveItem.getItemTitle();
+
+        // when
+        Item findItem = itemRepository.findById(itemId).get();
+
+        // then
+        assertThat(itemId).isEqualTo(findItem.getItemId());
+        assertThat(title).isEqualTo(findItem.getItemTitle());
+    }
+
+    @Test
     public void save_test(){
         // given
         String title = item.getItemTitle();

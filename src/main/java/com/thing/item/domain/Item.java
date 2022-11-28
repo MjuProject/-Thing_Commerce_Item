@@ -67,4 +67,8 @@ public class Item{
         this.itemLongitude = point.getX();
         this.itemLatitude = point.getY();
     }
+
+    public void addView(){
+        this.views += 1;
+    }
 }

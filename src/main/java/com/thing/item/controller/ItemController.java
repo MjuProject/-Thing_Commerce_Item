@@ -29,7 +29,8 @@ public class ItemController {
 
     @GetMapping(value = "/{item-id}")
     public APIResponseDTO<Object> showItemDetail(@PathVariable("item-id") Integer itemId){
-        return null;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return APIResponseDTO.success(itemService.findItemOne(itemId, auth.getName()));
     }
 
     @GetMapping(value = "/clients/{client-idx}")
