@@ -43,8 +43,10 @@ public class Item{
     private String itemAddress;
     @Column
     private int views;
-    @Column
+    @Column(name = "created_date")
     private LocalDate createdDate;
+    @Column
+    private boolean status;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "item_id")
@@ -71,4 +73,5 @@ public class Item{
     public void addView(){
         this.views += 1;
     }
+
 }

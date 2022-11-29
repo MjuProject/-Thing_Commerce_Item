@@ -4,6 +4,7 @@ import com.thing.item.domain.Item;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -37,7 +38,9 @@ public class ItemSaveRequestDTO {
                 .itemContent(itemContent)
                 .price(price)
                 .itemAddress(itemAddress)
+                .createdDate(LocalDate.now())
                 .views(0)
+                .status(true)
                 .build();
     }
 

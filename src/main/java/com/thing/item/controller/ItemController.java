@@ -2,6 +2,7 @@ package com.thing.item.controller;
 
 import com.thing.item.dto.APIResponseDTO;
 import com.thing.item.dto.ItemSaveRequestDTO;
+import com.thing.item.dto.ItemSearchRequestDTO;
 import com.thing.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -18,34 +19,31 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping(value = "")
-    public APIResponseDTO<Object> showItemList(){
-        return null;
-    }
-
-    @GetMapping(value = "/me")
-    public APIResponseDTO<Object> showMyList(){
-        return null;
+    public APIResponseDTO showItemList(@RequestBody ItemSearchRequestDTO itemSearchRequestDTO){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, auth.getName()));
     }
 
     @GetMapping(value = "/{item-id}")
-    public APIResponseDTO<Object> showItemDetail(@PathVariable("item-id") Integer itemId){
+    public APIResponseDTO showItemDetail(@PathVariable("item-id") Integer itemId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return APIResponseDTO.success(itemService.findItemOne(itemId, auth.getName()));
     }
 
     @GetMapping(value = "/clients/{client-idx}")
-    public APIResponseDTO<Object> showUserItemList(@PathVariable("client-idx") Integer clientIdx){
+    public APIResponseDTO showUserItemList(@PathVariable("client-idx") Integer clientIdx){
         return null;
     }
 
     @GetMapping(value = "/{item-id}/review")
-    public APIResponseDTO<Object> showItemReview(@PathVariable("item-id") Integer itemId){
+    public APIResponseDTO showItemReview(@PathVariable("item-id") Integer itemId){
         return null;
     }
 
     @GetMapping(value = "/search")
-    public APIResponseDTO<Object> searchItems(){
-        return null;
+    public APIResponseDTO searchItems(@RequestBody ItemSearchRequestDTO itemSearchRequestDTO){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, auth.getName()));
     }
 
     @PostMapping(value = "")
