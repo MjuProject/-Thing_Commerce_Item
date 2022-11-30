@@ -8,8 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +54,16 @@ public class ItemController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         itemSaveRequestDTO.setOwnerId(Integer.parseInt(auth.getName()));
         itemService.saveItem(itemSaveRequestDTO);
+        return APIResponseDTO.success();
+    }
+
+    @PutMapping(value = "/{item-id}")
+    public APIResponseDTO modifyItem(
+                                    @PathVariable("item-id") Integer itemId,
+                                    @RequestPart(value = "item") ItemSaveRequestDTO itemSaveRequestDTO,
+                                    @RequestPart(value = "itemPhoto") List<MultipartFile> itemPhotoSaveRequest) throws IOException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        itemService.modifyItem(Integer.parseInt(auth.getName()), itemId, itemSaveRequestDTO, itemPhotoSaveRequest);
         return APIResponseDTO.success();
     }
 

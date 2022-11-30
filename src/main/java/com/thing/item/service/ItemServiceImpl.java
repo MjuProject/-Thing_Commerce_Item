@@ -8,6 +8,7 @@ import com.thing.item.dto.*;
 import com.thing.item.exception.ItemNotFoundException;
 import com.thing.item.exception.MisMatchOwnerException;
 import com.thing.item.repository.ElasticItemRepository;
+import com.thing.item.repository.ItemPhotoRepository;
 import com.thing.item.repository.ItemRepository;
 import com.thing.item.repository.ItemRepositoryCustom;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,9 @@ import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService{
 
     private final ItemRepository itemRepository;
+    private final ItemPhotoRepository itemPhotoRepository;
     private final ClientServiceFeignClient clientServiceFeignClient;
     private final ItemRepositoryCustom itemRepositoryCustom;
     private final ElasticItemRepository elasticItemRepository;
@@ -89,6 +93,27 @@ public class ItemServiceImpl implements ItemService{
 
         itemRepository.delete(item);
     }
+
+    @Transactional
+    @Override
+    public void modifyItem(Integer clientIndex, Integer itemId, ItemSaveRequestDTO itemSaveRequestDTO, List<MultipartFile> itemPhotoSaveRequest) throws IOException {
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+        if(!item.getOwnerId().equals(clientIndex))
+            throw new MisMatchOwnerException();
+
+        // 사진 파일 삭제 로직
+
+        Point point = getAddressPoint(itemSaveRequestDTO.getItemAddress());
+        itemSaveRequestDTO.setItemLongitude(point.getX());
+        itemSaveRequestDTO.setItemLatitude(point.getY());
+
+        item.modifyItemInfo(itemSaveRequestDTO);
+        itemRepository.save(item);
+        
+        itemPhotoRepository.deleteAll(item.getPhotos());
+        // 사진 저장 로직
+    }
+
 
     private Point getAddressPoint(String address){
         return new Point(0, 0);
