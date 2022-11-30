@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -86,6 +87,20 @@ public class ItemRepositoryTest {
         // then
         assertThat(findList1.getContent().size()).isEqualTo(10);
         assertThat(findList2.getContent().size()).isEqualTo(5);
+    }
+
+    @Test
+    public void delete_test(){
+        // given
+        Item saveItem = itemRepository.save(item);
+        Integer itemId = saveItem.getItemId();
+
+        // when
+        itemRepository.delete(saveItem);
+
+        // then
+        Optional<Item> findItem = itemRepository.findById(itemId);
+        assertThat(findItem.isEmpty()).isTrue();
     }
 
 }

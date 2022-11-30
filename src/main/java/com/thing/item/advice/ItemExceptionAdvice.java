@@ -3,6 +3,7 @@ package com.thing.item.advice;
 import com.thing.item.dto.APIResponseDTO;
 import com.thing.item.exception.ItemExceptionType;
 import com.thing.item.exception.ItemNotFoundException;
+import com.thing.item.exception.MisMatchOwnerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,6 +27,13 @@ public class ItemExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected APIResponseDTO clientNotFoundException(){
         ItemExceptionType exceptionType = ItemExceptionType.ITEM_NOT_FOUND;
+        return APIResponseDTO.fail(exceptionType.getCode(), exceptionType.getMessage());
+    }
+
+    @ExceptionHandler(MisMatchOwnerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected APIResponseDTO mismatchOwnerException(){
+        ItemExceptionType exceptionType = ItemExceptionType.MISMATCH_OWNER;
         return APIResponseDTO.fail(exceptionType.getCode(), exceptionType.getMessage());
     }
 

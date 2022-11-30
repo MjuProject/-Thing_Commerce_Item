@@ -13,5 +13,6 @@ public interface ItemService {
     public ItemDetailResponseDTO findItemOne(Integer itemId, String clientIndex);
     public Slice<ItemSimpleResponseDTO> findItemList(ItemSearchRequestDTO itemSearchRequestDTO, String clientIndex);
     public Slice<ItemSimpleResponseDTO> findItemListByOwnerIndex(Integer clientIndex, int page);
+    public void deleteItem(Integer itemId, Integer clientIndex);
 
 }

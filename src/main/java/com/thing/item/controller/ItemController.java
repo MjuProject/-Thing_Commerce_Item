@@ -54,4 +54,10 @@ public class ItemController {
         return APIResponseDTO.success();
     }
 
+    @DeleteMapping(value = "/{item-id}")
+    public APIResponseDTO deleteItem(@PathVariable("item-id") Integer itemId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        itemService.deleteItem(itemId, Integer.parseInt(auth.getName()));
+        return APIResponseDTO.success();
+    }
 }

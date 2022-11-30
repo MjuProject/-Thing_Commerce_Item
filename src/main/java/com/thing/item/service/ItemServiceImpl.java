@@ -6,6 +6,7 @@ import com.thing.item.domain.ElasticItem;
 import com.thing.item.domain.Item;
 import com.thing.item.dto.*;
 import com.thing.item.exception.ItemNotFoundException;
+import com.thing.item.exception.MisMatchOwnerException;
 import com.thing.item.repository.ElasticItemRepository;
 import com.thing.item.repository.ItemRepository;
 import com.thing.item.repository.ItemRepositoryCustom;
@@ -76,6 +77,17 @@ public class ItemServiceImpl implements ItemService{
     @Override
     public Slice<ItemSimpleResponseDTO> findItemListByOwnerIndex(Integer clientIndex, int page) {
         return itemRepository.findByOwnerId(clientIndex, PageRequest.of(page, 10));
+    }
+
+    @Transactional
+    @Override
+    public void deleteItem(Integer itemId, Integer clientIndex) {
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
+        if(!item.getOwnerId().equals(clientIndex))
+            throw new MisMatchOwnerException();
+        // 사진 파일 삭제 로직
+
+        itemRepository.delete(item);
     }
 
     private Point getAddressPoint(String address){
