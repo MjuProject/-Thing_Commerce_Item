@@ -31,8 +31,8 @@ public class ItemController {
     }
 
     @GetMapping(value = "/clients/{client-idx}")
-    public APIResponseDTO showUserItemList(@PathVariable("client-idx") Integer clientIdx){
-        return null;
+    public APIResponseDTO showUserItemList(@PathVariable("client-idx") Integer clientIdx, @RequestParam Integer page){
+        return APIResponseDTO.success(itemService.findItemListByOwnerIndex(clientIdx, page));
     }
 
     @GetMapping(value = "/{item-id}/review")

@@ -12,5 +12,6 @@ public interface ItemService {
     public Item saveItem(ItemSaveRequestDTO itemSaveRequestDTO);
     public ItemDetailResponseDTO findItemOne(Integer itemId, String clientIndex);
     public Slice<ItemSimpleResponseDTO> findItemList(ItemSearchRequestDTO itemSearchRequestDTO, String clientIndex);
+    public Slice<ItemSimpleResponseDTO> findItemListByOwnerIndex(Integer clientIndex, int page);
 
 }

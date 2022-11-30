@@ -1,5 +1,7 @@
 package com.thing.item.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
@@ -10,6 +12,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ItemSimpleResponseDTO {
 
     private Integer itemId;

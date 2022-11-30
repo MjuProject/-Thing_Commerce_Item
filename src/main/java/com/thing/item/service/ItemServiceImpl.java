@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +71,11 @@ public class ItemServiceImpl implements ItemService{
             hasNext = true;
         }
         return new SliceImpl<>(content, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<ItemSimpleResponseDTO> findItemListByOwnerIndex(Integer clientIndex, int page) {
+        return itemRepository.findByOwnerId(clientIndex, PageRequest.of(page, 10));
     }
 
     private Point getAddressPoint(String address){
