@@ -22,7 +22,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping(value = "")
-    public APIResponseDTO showItemList(@RequestBody ItemSearchRequestDTO itemSearchRequestDTO){
+    public APIResponseDTO showItemList(ItemSearchRequestDTO itemSearchRequestDTO){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, auth.getName()));
     }

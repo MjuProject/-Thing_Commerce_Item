@@ -14,6 +14,7 @@ import com.thing.item.type.OrderType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class ItemRepositoryCustom {
                 .leftJoin(item.photos, itemPhoto1)
                 .on(itemPhoto1.isMain.eq(true))
                 .where(
-                        itemIdIn(itemIdList),
+                        itemIdIn(itemIdList, StringUtils.hasText(itemSearchRequestDTO.getQuery())),
                         categoryBigEq(itemSearchRequestDTO.getCategoryBig()),
                         categoryMiddleEq(itemSearchRequestDTO.getCategoryMiddle()),
                         categorySmallEq(itemSearchRequestDTO.getCategorySmall()),
@@ -58,18 +59,19 @@ public class ItemRepositoryCustom {
 
     private List<ItemSimpleResponseDTO> ordering(JPAQuery<ItemSimpleResponseDTO> query, ItemSearchRequestDTO itemSearchRequestDTO, Pageable pageable, List<Integer> itemIdList){
         OrderType orderType = itemSearchRequestDTO.getOrderType();
-        switch(orderType){
-            case ACCURATE:
-                query = query.orderBy(accurateSort(itemIdList));
-                break;
-            case DISTANCE:
-                query = query.orderBy(stDistanceSphereSort(itemSearchRequestDTO.getLatitude(), itemSearchRequestDTO.getLongitude()));
-                break;
-            default:
-                query = query.orderBy(orderType.getOrder());
-                break;
+        if (orderType != null){
+            switch(orderType){
+                case ACCURATE:
+                    query = query.orderBy(accurateSort(itemIdList));
+                    break;
+                case DISTANCE:
+                    query = query.orderBy(stDistanceSphereSort(itemSearchRequestDTO.getLatitude(), itemSearchRequestDTO.getLongitude()));
+                    break;
+                default:
+                    query = query.orderBy(orderType.getOrder());
+                    break;
+            }
         }
-
         return query.offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -83,12 +85,12 @@ public class ItemRepositoryCustom {
         return (latitude == null || longitude == null)? OrderByNull.DEFAULT : Expressions.stringTemplate(ST_DISTANCE_SPHERE_QUERY, longitude, latitude).asc();
     }
 
-    private BooleanExpression itemIdIn(List<Integer> itemIdList){
-        return itemIdList != null? item.itemId.in(itemIdList) : null;
+    private BooleanExpression itemIdIn(List<Integer> itemIdList, boolean isSearch){
+        return !isSearch? null : item.itemId.in(itemIdList);
     }
 
     private BooleanExpression stDistanceSphere(Double latitude, Double longitude){ // 6Km 이내
-        return (latitude == 0 || longitude == 0) ? null : Expressions.stringTemplate(ST_DISTANCE_SPHERE_QUERY, longitude, latitude).loe(DISTANCE);
+        return (latitude == null || longitude == null) ? null : Expressions.stringTemplate(ST_DISTANCE_SPHERE_QUERY, longitude, latitude).loe(DISTANCE);
     }
 
     private BooleanExpression categoryBigEq(Integer categoryBig){

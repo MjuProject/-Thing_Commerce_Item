@@ -4,14 +4,14 @@ server:
 spring:
   application:
     name: item-service
-#  datasource:
-#    driver-class-name: org.mariadb.jdbc.Driver
-#    url: jdbc:mariadb://item.c8tp5djsjusu.ap-northeast-2.rds.amazonaws.com/item
-#    username: admin
-#    password: 12345678
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://127.0.0.1:3307/test
+    username: root
+    password: 4268
+#  datasource:
+#    url: jdbc:h2:mem:testdb
+#    username: sa
   jpa:
     show-sql: true
     hibernate:
@@ -21,6 +21,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    defer-datasource-initialization: true
   h2:
     console:
       enabled: true

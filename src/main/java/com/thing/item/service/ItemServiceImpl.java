@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,7 +64,7 @@ public class ItemServiceImpl implements ItemService{
     @Override
     public Slice<ItemSimpleResponseDTO> findItemList(ItemSearchRequestDTO itemSearchRequestDTO, String clientIndex) {
         Pageable pageable = PageRequest.of(itemSearchRequestDTO.getPage(), 10);
-        List<ElasticItem> itemList = null;
+        List<ElasticItem> itemList = Collections.emptyList();
         if (StringUtils.hasText(itemSearchRequestDTO.getQuery())){
             itemList = elasticItemRepository.searchItemByQuery(itemSearchRequestDTO.getQuery());
         }
