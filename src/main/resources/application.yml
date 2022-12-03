@@ -31,6 +31,9 @@ spring:
     host: localhost:9200
     username: elastic
     password: 12345678
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 eureka:
   instance:

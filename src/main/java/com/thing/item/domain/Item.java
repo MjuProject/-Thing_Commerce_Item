@@ -7,6 +7,7 @@ import org.springframework.data.geo.Point;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -44,7 +45,7 @@ public class Item{
     @Column
     private int views;
     @Column(name = "created_date")
-    private LocalDate createdDate;
+    private Date createdDate;
     @Column
     private boolean status;
 

@@ -6,6 +6,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -21,11 +22,11 @@ public class ItemSimpleResponseDTO {
     private Integer price;
     private String itemPhoto;
     private Boolean status;
-    private LocalDate createdDate;
+    private Date createdDate;
     private Boolean isLike;
 
     @QueryProjection
-    public ItemSimpleResponseDTO(Integer itemId, String itemTitle, String itemAddress, Integer price, String itemPhoto, Boolean status, LocalDate createdDate) {
+    public ItemSimpleResponseDTO(Integer itemId, String itemTitle, String itemAddress, Integer price, String itemPhoto, Boolean status, Date createdDate) {
         this.itemId = itemId;
         this.itemTitle = itemTitle;
         this.itemAddress = itemAddress;
