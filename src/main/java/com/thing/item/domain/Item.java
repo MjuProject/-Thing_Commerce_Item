@@ -75,4 +75,8 @@ public class Item{
         this.views += 1;
     }
 
+    public void sold(){
+        this.status = false;
+    }
+
 }

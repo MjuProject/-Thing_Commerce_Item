@@ -32,6 +32,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch'
 	implementation group: 'com.querydsl', name: 'querydsl-jpa', version: '5.0.0'
+	implementation 'org.springframework.kafka:spring-kafka:3.0.0'
 //	implementation 'org.springdoc:springdoc-openapi-webflux-core:1.6.9'
 //	implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.6.9'
 	compileOnly 'org.projectlombok:lombok'
