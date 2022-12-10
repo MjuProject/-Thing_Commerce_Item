@@ -44,7 +44,7 @@ public class ItemController {
     }
 
     @GetMapping(value = "/search")
-    public APIResponseDTO searchItems(@RequestBody ItemSearchRequestDTO itemSearchRequestDTO){
+    public APIResponseDTO searchItems(ItemSearchRequestDTO itemSearchRequestDTO){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, auth.getName()));
     }

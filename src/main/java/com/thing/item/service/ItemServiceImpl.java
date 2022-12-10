@@ -1,5 +1,6 @@
 package com.thing.item.service;
 
+import com.thing.item.client.BasketServiceFeignClient;
 import com.thing.item.client.ClientServiceFeignClient;
 import com.thing.item.client.KakaoMapClient;
 import com.thing.item.domain.ElasticItem;
@@ -25,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +34,7 @@ public class ItemServiceImpl implements ItemService{
     private final ItemRepository itemRepository;
     private final ItemPhotoRepository itemPhotoRepository;
     private final ClientServiceFeignClient clientServiceFeignClient;
+    private final BasketServiceFeignClient basketServiceFeignClient;
     private final ItemRepositoryCustom itemRepositoryCustom;
     private final ElasticItemRepository elasticItemRepository;
 //    private final KakaoMapClient kakaoMapClient;
@@ -55,9 +56,9 @@ public class ItemServiceImpl implements ItemService{
         item.addView();
         ClientInfoDTO clientInfoDTO = clientServiceFeignClient.getClient(item.getOwnerId()).getData();
         // 장바구니 찜 갯수 구하기
-        Long basketCount = 0L;
+        Integer basketCount = basketServiceFeignClient.countBasket(itemId).getData();
         // 해당 물건 찜 유무 확인
-        boolean isLike = false;
+        boolean isLike = basketServiceFeignClient.showBasket(Integer.parseInt(clientIndex), itemId).getData();
         return ItemDetailResponseDTO.from(clientInfoDTO, item, basketCount, isLike);
     }
 
@@ -70,7 +71,9 @@ public class ItemServiceImpl implements ItemService{
         }
         List<ItemSimpleResponseDTO> content = itemRepositoryCustom.findByItemList(itemSearchRequestDTO, pageable, itemList);
         // 장바구니 처리
-
+        for(ItemSimpleResponseDTO dto : content){
+            dto.setIsLike(basketServiceFeignClient.showBasket(Integer.parseInt(clientIndex), dto.getItemId()).getData());
+        }
         boolean hasNext = false;
         if (content.size() > pageable.getPageSize()) {
             content.remove(pageable.getPageSize());

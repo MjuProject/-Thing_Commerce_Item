@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,7 +70,7 @@ public class ItemRepositoryTest {
             saveItem = itemRepository.save(Item.builder()
                     .ownerId(ownerId)
                     .itemTitle(String.valueOf(i))
-                    .createdDate(LocalDate.now())
+                    .createdDate(new Date())
                     .build());
 
             itemPhotoRepository.save(ItemPhoto.builder()
