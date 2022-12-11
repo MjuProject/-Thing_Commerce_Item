@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableEurekaClient
@@ -22,6 +23,11 @@ public class ItemApplication {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.getFactory().configure(JsonWriteFeature.ESCAPE_NON_ASCII.mappedFeature(), true);
 		return objectMapper;
+	}
+
+	@Bean
+	public RestTemplate kakaoMapTemplate(){
+		return new RestTemplate();
 	}
 
 }

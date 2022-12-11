@@ -36,11 +36,6 @@ public class ItemController {
         return APIResponseDTO.success(itemService.findItemListByOwnerIndex(clientIdx, page));
     }
 
-    @GetMapping(value = "/{item-id}/review")
-    public APIResponseDTO showItemReview(@PathVariable("item-id") Integer itemId){
-        return null;
-    }
-
     @GetMapping(value = "/search")
     public APIResponseDTO searchItems(ItemSearchRequestDTO itemSearchRequestDTO){
         return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, getClientIndex()));
