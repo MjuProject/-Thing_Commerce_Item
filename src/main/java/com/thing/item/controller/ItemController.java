@@ -23,14 +23,12 @@ public class ItemController {
 
     @GetMapping(value = "")
     public APIResponseDTO showItemList(ItemSearchRequestDTO itemSearchRequestDTO){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, auth.getName()));
+        return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, getClientIndex()));
     }
 
     @GetMapping(value = "/{item-id}")
     public APIResponseDTO showItemDetail(@PathVariable("item-id") Integer itemId){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return APIResponseDTO.success(itemService.findItemOne(itemId, auth.getName()));
+        return APIResponseDTO.success(itemService.findItemOne(itemId, getClientIndex()));
     }
 
     @GetMapping(value = "/clients/{client-idx}")
@@ -45,32 +43,35 @@ public class ItemController {
 
     @GetMapping(value = "/search")
     public APIResponseDTO searchItems(ItemSearchRequestDTO itemSearchRequestDTO){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, auth.getName()));
+        return APIResponseDTO.success(itemService.findItemList(itemSearchRequestDTO, getClientIndex()));
     }
 
     @PostMapping(value = "")
-    public APIResponseDTO createItem(@Valid @RequestBody ItemSaveRequestDTO itemSaveRequestDTO){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        itemSaveRequestDTO.setOwnerId(Integer.parseInt(auth.getName()));
-        itemService.saveItem(itemSaveRequestDTO);
+    public APIResponseDTO createItem(@Valid @RequestPart(value = "item") ItemSaveRequestDTO itemSaveRequestDTO,
+                                     @RequestPart(value = "itemPhoto") List<MultipartFile> itemPhotoSaveRequest){
+        itemSaveRequestDTO.setOwnerId(getClientIndex());
+        itemService.saveItem(itemSaveRequestDTO, itemPhotoSaveRequest);
         return APIResponseDTO.success();
     }
 
     @PutMapping(value = "/{item-id}")
     public APIResponseDTO modifyItem(
                                     @PathVariable("item-id") Integer itemId,
-                                    @RequestPart(value = "item") ItemSaveRequestDTO itemSaveRequestDTO,
+                                    @Valid @RequestPart(value = "item") ItemSaveRequestDTO itemSaveRequestDTO,
                                     @RequestPart(value = "itemPhoto") List<MultipartFile> itemPhotoSaveRequest) throws IOException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        itemService.modifyItem(Integer.parseInt(auth.getName()), itemId, itemSaveRequestDTO, itemPhotoSaveRequest);
+        itemService.modifyItem(getClientIndex(), itemId, itemSaveRequestDTO, itemPhotoSaveRequest);
         return APIResponseDTO.success();
     }
 
     @DeleteMapping(value = "/{item-id}")
     public APIResponseDTO deleteItem(@PathVariable("item-id") Integer itemId){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        itemService.deleteItem(itemId, Integer.parseInt(auth.getName()));
+        itemService.deleteItem(itemId, getClientIndex());
         return APIResponseDTO.success();
+    }
+
+    private Integer getClientIndex(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String clientIndex = auth.getName();
+        return clientIndex.equals("anonymousUser")? -1 : Integer.parseInt(clientIndex);
     }
 }

@@ -41,7 +41,7 @@ public class ItemServiceImpl implements ItemService{
 
     @Transactional
     @Override
-    public Item saveItem(ItemSaveRequestDTO itemSaveRequestDTO) {
+    public Item saveItem(ItemSaveRequestDTO itemSaveRequestDTO, List<MultipartFile> itemPhotoSaveRequest) {
         Item item = itemSaveRequestDTO.toEntity();
         Point addressPoint = getAddressPoint(item.getItemAddress());
         item.setPoint(addressPoint);
@@ -51,19 +51,19 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
-    public ItemDetailResponseDTO findItemOne(Integer itemId, String clientIndex) {
+    public ItemDetailResponseDTO findItemOne(Integer itemId, Integer clientIndex) {
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         item.addView();
         ClientInfoDTO clientInfoDTO = clientServiceFeignClient.getClient(item.getOwnerId()).getData();
         // 장바구니 찜 갯수 구하기
         Integer basketCount = basketServiceFeignClient.countBasket(itemId).getData();
         // 해당 물건 찜 유무 확인
-        boolean isLike = basketServiceFeignClient.showBasket(Integer.parseInt(clientIndex), itemId).getData();
+        boolean isLike = (clientIndex == -1)? false : basketServiceFeignClient.showBasket(clientIndex, itemId).getData();
         return ItemDetailResponseDTO.from(clientInfoDTO, item, basketCount, isLike);
     }
 
     @Override
-    public Slice<ItemSimpleResponseDTO> findItemList(ItemSearchRequestDTO itemSearchRequestDTO, String clientIndex) {
+    public Slice<ItemSimpleResponseDTO> findItemList(ItemSearchRequestDTO itemSearchRequestDTO, Integer clientIndex) {
         Pageable pageable = PageRequest.of(itemSearchRequestDTO.getPage(), 10);
         List<ElasticItem> itemList = Collections.emptyList();
         if (StringUtils.hasText(itemSearchRequestDTO.getQuery())){
@@ -71,8 +71,10 @@ public class ItemServiceImpl implements ItemService{
         }
         List<ItemSimpleResponseDTO> content = itemRepositoryCustom.findByItemList(itemSearchRequestDTO, pageable, itemList);
         // 장바구니 처리
-        for(ItemSimpleResponseDTO dto : content){
-            dto.setIsLike(basketServiceFeignClient.showBasket(Integer.parseInt(clientIndex), dto.getItemId()).getData());
+        if(clientIndex != -1){
+            for(ItemSimpleResponseDTO dto : content){
+                dto.setIsLike(basketServiceFeignClient.showBasket(clientIndex, dto.getItemId()).getData());
+            }
         }
         boolean hasNext = false;
         if (content.size() > pageable.getPageSize()) {
@@ -118,6 +120,13 @@ public class ItemServiceImpl implements ItemService{
         // 사진 저장 로직
     }
 
+    private void savePhotos(){
+
+    }
+
+    private void deletePhotos(){
+
+    }
 
     private Point getAddressPoint(String address){
         return new Point(0, 0);

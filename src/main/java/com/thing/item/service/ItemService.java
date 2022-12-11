@@ -13,9 +13,9 @@ import java.util.List;
 
 public interface ItemService {
 
-    public Item saveItem(ItemSaveRequestDTO itemSaveRequestDTO);
-    public ItemDetailResponseDTO findItemOne(Integer itemId, String clientIndex);
-    public Slice<ItemSimpleResponseDTO> findItemList(ItemSearchRequestDTO itemSearchRequestDTO, String clientIndex);
+    public Item saveItem(ItemSaveRequestDTO itemSaveRequestDTO, List<MultipartFile> itemPhotos);
+    public ItemDetailResponseDTO findItemOne(Integer itemId, Integer clientIndex);
+    public Slice<ItemSimpleResponseDTO> findItemList(ItemSearchRequestDTO itemSearchRequestDTO, Integer clientIndex);
     public Slice<ItemSimpleResponseDTO> findItemListByOwnerIndex(Integer clientIndex, int page);
     public void deleteItem(Integer itemId, Integer clientIndex);
     public void modifyItem(Integer clientIndex, Integer itemId, ItemSaveRequestDTO itemSaveRequestDTO, List<MultipartFile> itemPhotoSaveRequest) throws IOException;
