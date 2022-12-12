@@ -39,7 +39,7 @@ public class ItemRepositoryCustom {
                                 item.itemTitle.as("itemTitle"),
                                 item.itemAddress.as("itemAddress"),
                                 item.price.as("price"),
-                                itemPhoto1.itemPhoto.as("itemPhoto"),
+                                itemPhoto1.itemPhotoIndex.as("itemPhotoIndex"),
                                 item.status.as("status"),
                                 item.createdDate
                         )

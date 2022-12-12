@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
-    @Query("select new com.thing.item.dto.ItemSimpleResponseDTO(i.itemId, i.itemTitle, i.itemAddress, i.price, p.itemPhoto, i.status, i.createdDate) " +
+    @Query("select new com.thing.item.dto.ItemSimpleResponseDTO(i.itemId, i.itemTitle, i.itemAddress, i.price, p.itemPhotoIndex, i.status, i.createdDate) " +
             "from Item i " +
             "inner join i.photos p on i.itemId = p.itemId " +
             "where i.ownerId = :ownerId " +

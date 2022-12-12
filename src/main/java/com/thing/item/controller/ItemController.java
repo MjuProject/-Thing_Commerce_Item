@@ -1,17 +1,21 @@
 package com.thing.item.controller;
 
+import com.thing.item.domain.ItemPhoto;
 import com.thing.item.dto.APIResponseDTO;
 import com.thing.item.dto.ItemSaveRequestDTO;
 import com.thing.item.dto.ItemSearchRequestDTO;
 import com.thing.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -62,6 +66,14 @@ public class ItemController {
     public APIResponseDTO deleteItem(@PathVariable("item-id") Integer itemId){
         itemService.deleteItem(itemId, getClientIndex());
         return APIResponseDTO.success();
+    }
+
+    @GetMapping(value = "/{item-id}/item-photos/{item-photo-index}")
+    public byte[] showPhoto(@PathVariable("item-id") Integer itemId, @PathVariable("item-photo-index") Integer itemPhotoIndex) throws IOException {
+        InputStream imageStream = new FileInputStream(itemService.getItemPhotoPath(itemPhotoIndex));
+        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+        imageStream.close();
+        return imageByteArray;
     }
 
     private Integer getClientIndex(){
