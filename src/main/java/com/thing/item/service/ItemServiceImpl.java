@@ -171,7 +171,7 @@ public class ItemServiceImpl implements ItemService{
             // 경로 구분자 File.separator 사용
             // 파일을 저장할 세부 경로 지정
             String path = File.separator + itemId;
-            File file = new File(path);
+            File file = new File(IMAGE_ROOT_PATH + path);
 
             // 디렉터리가 존재하지 않을 경우
             if (!file.exists()) {
