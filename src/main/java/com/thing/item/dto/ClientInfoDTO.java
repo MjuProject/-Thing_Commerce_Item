@@ -20,6 +20,5 @@ public class ClientInfoDTO {
     private String clientName;
     private String nickname;
     private String clientPhoto;
-    private Float trustPoint;
 
 }

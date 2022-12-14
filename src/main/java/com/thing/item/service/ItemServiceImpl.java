@@ -18,6 +18,8 @@ import com.thing.item.repository.ItemRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -55,6 +57,7 @@ public class ItemServiceImpl implements ItemService{
     private final ElasticItemRepository elasticItemRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     @Value("${kakao_api_key}")
     private String KAKAO_API_KEY;
@@ -77,11 +80,15 @@ public class ItemServiceImpl implements ItemService{
     public ItemDetailResponseDTO findItemOne(Integer itemId, Integer clientIndex) {
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         item.addView();
-        ClientInfoDTO clientInfoDTO = clientServiceFeignClient.getClient(item.getOwnerId()).getData();
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        ClientInfoDTO clientInfoDTO = circuitBreaker.run(() -> clientServiceFeignClient.getClient(item.getOwnerId()).getData(),
+                throwable -> new ClientInfoDTO());
         // 장바구니 찜 갯수 구하기
-        Integer basketCount = basketServiceFeignClient.countBasket(itemId).getData();
+        Integer basketCount = circuitBreaker.run(() -> basketServiceFeignClient.countBasket(itemId).getData(),
+                throwable -> 0);
         // 해당 물건 찜 유무 확인
-        boolean isLike = (clientIndex == -1)? false : basketServiceFeignClient.showBasket(clientIndex, itemId).getData();
+        boolean isLike = (clientIndex == -1)? false : circuitBreaker.run(() -> basketServiceFeignClient.showBasket(clientIndex, itemId).getData(),
+                throwable -> false);
         return ItemDetailResponseDTO.from(clientInfoDTO, item, basketCount, isLike);
     }
 
@@ -93,10 +100,12 @@ public class ItemServiceImpl implements ItemService{
             itemList = elasticItemRepository.searchItemByQuery(itemSearchRequestDTO.getQuery());
         }
         List<ItemSimpleResponseDTO> content = itemRepositoryCustom.findByItemList(itemSearchRequestDTO, pageable, itemList);
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
         // 장바구니 처리
         if(clientIndex != -1){
             for(ItemSimpleResponseDTO dto : content){
-                dto.setIsLike(basketServiceFeignClient.showBasket(clientIndex, dto.getItemId()).getData());
+                dto.setIsLike(circuitBreaker.run(() -> basketServiceFeignClient.showBasket(clientIndex, dto.getItemId()).getData(),
+                        throwable -> false));
             }
         }
         boolean hasNext = false;

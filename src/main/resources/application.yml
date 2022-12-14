@@ -47,6 +47,10 @@ eureka:
 
 kakao_api_key: kakao-api-key
 
+feign:
+  hystrix:
+    enabled: true
+
 image:
   path:
     item: C://thing_commerce/images/item
