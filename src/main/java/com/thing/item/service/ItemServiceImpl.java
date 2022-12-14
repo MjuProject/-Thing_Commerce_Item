@@ -162,6 +162,18 @@ public class ItemServiceImpl implements ItemService{
         return itemPhoto.getItemPhoto();
     }
 
+    @Override
+    public List<ItemSimpleResponseDTO> findItemListByBasket(Integer clientIdx) {
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        List<Integer> itemIdList = circuitBreaker.run(() -> basketServiceFeignClient.showBasketList(clientIdx).getData(),
+                throwable -> new ArrayList<>());
+        List<ItemSimpleResponseDTO> itemList = itemRepository.findByItemIdIn(itemIdList);
+        for(ItemSimpleResponseDTO item : itemList){
+            item.setIsLike(true);
+        }
+        return itemList;
+    }
+
     private void savePhotos(Integer itemId, List<MultipartFile> files) {
         List<ItemPhoto> photoList = new ArrayList<>();
 

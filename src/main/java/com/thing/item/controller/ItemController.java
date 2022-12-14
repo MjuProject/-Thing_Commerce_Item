@@ -76,6 +76,11 @@ public class ItemController {
         return imageByteArray;
     }
 
+    @GetMapping(value = "/clients/{client-idx}/baskets")
+    public APIResponseDTO showBasketItemList(@PathVariable("client-idx") Integer clientIdx){
+        return APIResponseDTO.success(itemService.findItemListByBasket(clientIdx));
+    }
+
     private Integer getClientIndex(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String clientIndex = auth.getName();

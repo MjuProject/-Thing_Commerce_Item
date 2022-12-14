@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(HttpMethod.GET, "/items").permitAll()
                 .antMatchers(HttpMethod.GET, "/items/*").permitAll()
+                .antMatchers("/items/{item-id}/item-photos/{item-photo-index}").permitAll()
                 .antMatchers("/items/clients/*").permitAll()
                 .anyRequest().authenticated();
 

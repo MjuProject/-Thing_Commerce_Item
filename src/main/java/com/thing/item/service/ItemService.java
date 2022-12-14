@@ -20,5 +20,6 @@ public interface ItemService {
     public void deleteItem(Integer itemId, Integer clientIndex);
     public void modifyItem(Integer clientIndex, Integer itemId, ItemSaveRequestDTO itemSaveRequestDTO, List<MultipartFile> itemPhotoSaveRequest) throws IOException;
     public String getItemPhotoPath(Integer itemPhotoIndex);
+    public List<ItemSimpleResponseDTO> findItemListByBasket(Integer clientIdx);
 
 }
