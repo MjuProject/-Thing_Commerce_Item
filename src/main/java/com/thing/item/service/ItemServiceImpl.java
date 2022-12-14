@@ -1,6 +1,7 @@
 package com.thing.item.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.thing.item.client.BasketServiceFeignClient;
 import com.thing.item.client.ClientServiceFeignClient;
 import com.thing.item.domain.ElasticItem;
@@ -259,12 +260,13 @@ public class ItemServiceImpl implements ItemService{
         Point point = null;
         try{
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
-            KakaoAddress kakaoAddress = objectMapper.convertValue(response.getBody(), KakaoAddress.class);
+            KakaoAddress kakaoAddress = new Gson().fromJson(response.getBody(), KakaoAddress.class);
             if(kakaoAddress.getDocuments().size() > 0){
                 Document doc = kakaoAddress.getDocuments().get(0);
                 point = new Point(Double.parseDouble(doc.getX()), Double.parseDouble(doc.getY()));
             }
         }catch(Exception e){
+            e.printStackTrace();
             throw new KakaoMapErrorException();
         }
 
