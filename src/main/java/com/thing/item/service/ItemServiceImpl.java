@@ -81,9 +81,13 @@ public class ItemServiceImpl implements ItemService{
     public ItemDetailResponseDTO findItemOne(Integer itemId, Integer clientIndex) {
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         item.addView();
+        itemRepository.save(item);
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
         ClientInfoDTO clientInfoDTO = circuitBreaker.run(() -> clientServiceFeignClient.getClient(item.getOwnerId()).getData(),
-                throwable -> new ClientInfoDTO());
+                throwable -> {
+                    log.error(throwable.getCause() + " " + throwable.getMessage());
+                    return new ClientInfoDTO();
+                });
         // 장바구니 찜 갯수 구하기
         Integer basketCount = circuitBreaker.run(() -> basketServiceFeignClient.countBasket(itemId).getData(),
                 throwable -> 0);

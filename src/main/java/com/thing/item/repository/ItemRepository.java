@@ -20,9 +20,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     @Query("select new com.thing.item.dto.ItemSimpleResponseDTO(i.itemId, i.itemTitle, i.itemAddress, i.price, p.itemPhotoIndex, i.status, i.createdDate) " +
             "from Item i " +
-            "inner join i.photos p on i.itemId = p.itemId " +
-            "where i.ownerId = :ownerId " +
-            "and p.isMain = true " +
-            "and i.itemId IN :itemIdList")
+            "inner join i.photos p on i.itemId = p.itemId and p.isMain = true " +
+            "where i.itemId IN :itemIdList")
     List<ItemSimpleResponseDTO> findByItemIdIn(List<Integer> itemIdList);
 }

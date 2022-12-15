@@ -21,6 +21,7 @@ public class KafkaConsumer {
         int itemId = Integer.parseInt(kafkaMessage);
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         item.sold();
+        itemRepository.save(item);
     }
 
 }

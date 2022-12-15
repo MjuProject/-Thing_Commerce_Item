@@ -6,7 +6,7 @@ spring:
     name: item-service
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://127.0.0.1:3307/test
+    url: jdbc:mariadb://127.0.0.1:3307/item
     username: root
     password: 4268
 #  datasource:
@@ -45,7 +45,7 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-kakao_api_key: kakao-api-key
+kakao_api_key: e26035adbdc02a25541495ec6662134b
 
 feign:
   hystrix:
